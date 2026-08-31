@@ -1,0 +1,2 @@
+{"timestamp":2476139,"category":"uptake.remotecontent.result","name":"uptake_remotesettings","extra":{"age":"6187.671","value":"up_to_date","glean_timestamp":"1788168879653","trigger":"startup","source":"settings-changes-monitoring"}}
+{"timestamp":2476139,"category":"uptake.remotecontent.result","name":"uptake_remotesettings","extra":{"value":"success","trigger":"startup","glean_timestamp":"1788168879653","source":"settings-sync","duration":"54","timestamp":"\"1788165546329\""}}

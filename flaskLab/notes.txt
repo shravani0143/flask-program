@@ -1,0 +1,3 @@
+[root@localhost flaskLab]# python3 -m venv venv
+[root@localhost flaskLab]# source venv/bin/activate 
+pip install flask
