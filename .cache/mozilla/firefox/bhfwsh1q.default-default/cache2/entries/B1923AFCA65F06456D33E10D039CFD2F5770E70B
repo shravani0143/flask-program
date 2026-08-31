@@ -1,799 +1,0 @@
-docReady(() => {
-  if (!EVALEX_TRUSTED) {
-    initPinBox();
-  }
-  // if we are in console mode, show the console.
-  if (CONSOLE_MODE && EVALEX) {
-    createInteractiveConsole();
-  }
-
-  const frames = document.querySelectorAll("div.traceback div.frame");
-  if (EVALEX) {
-    addConsoleIconToFrames(frames);
-  }
-  addEventListenersToElements(document.querySelectorAll("div.detail"), "click", () =>
-    document.querySelector("div.traceback").scrollIntoView(false)
-  );
-  addToggleFrameTraceback(frames);
-  addToggleTraceTypesOnClick(document.querySelectorAll("h2.traceback"));
-  addInfoPrompt(document.querySelectorAll("span.nojavascript"));
-  wrapPlainTraceback();
-});
-
-function addToggleFrameTraceback(frames) {
-  frames.forEach((frame) => {
-    frame.addEventListener("click", () => {
-      frame.getElementsByTagName("pre")[0].parentElement.classList.toggle("expanded");
-    });
-  })
-}
-
-
-function wrapPlainTraceback() {
-  const plainTraceback = document.querySelector("div.plain textarea");
-  const wrapper = document.createElement("pre");
-  const textNode = document.createTextNode(plainTraceback.textContent);
-  wrapper.appendChild(textNode);
-  plainTraceback.replaceWith(wrapper);
-}
-
-function makeDebugURL(args) {
-  const params = new URLSearchParams(args)
-  params.set("s", SECRET)
-  return `?__debugger__=yes&${params}`
-}
-
-function initPinBox() {
-  document.querySelector(".pin-prompt form").addEventListener(
-    "submit",
-    function (event) {
-      event.preventDefault();
-      const btn = this.btn;
-      btn.disabled = true;
-
-      fetch(
-        makeDebugURL({cmd: "pinauth", pin: this.pin.value})
-      )
-        .then((res) => res.json())
-        .then(({auth, exhausted}) => {
-          if (auth) {
-            EVALEX_TRUSTED = true;
-            fadeOut(document.getElementsByClassName("pin-prompt")[0]);
-          } else {
-            alert(
-              `Error: ${
-                exhausted
-                  ? "too many attempts.  Restart server to retry."
-                  : "incorrect pin"
-              }`
-            );
-          }
-        })
-        .catch((err) => {
-          alert("Error: Could not verify PIN.  Network error?");
-          console.error(err);
-        })
-        .finally(() => (btn.disabled = false));
-    },
-    false
-  );
-}
-
-function promptForPin() {
-  if (!EVALEX_TRUSTED) {
-    fetch(makeDebugURL({cmd: "printpin"}));
-    const pinPrompt = document.getElementsByClassName("pin-prompt")[0];
-    fadeIn(pinPrompt);
-    document.querySelector('.pin-prompt input[name="pin"]').focus();
-  }
-}
-
-/**
- * Helper function for shell initialization
- */
-function openShell(consoleNode, target, frameID) {
-  promptForPin();
-  if (consoleNode) {
-    slideToggle(consoleNode);
-    return consoleNode;
-  }
-  let historyPos = 0;
-  const history = [""];
-  const consoleElement = createConsole();
-  const output = createConsoleOutput();
-  const form = createConsoleInputForm();
-  const command = createConsoleInput();
-
-  target.parentNode.appendChild(consoleElement);
-  consoleElement.append(output);
-  consoleElement.append(form);
-  form.append(command);
-  command.focus();
-  slideToggle(consoleElement);
-
-  form.addEventListener("submit", (e) => {
-    handleConsoleSubmit(e, command, frameID).then((consoleOutput) => {
-      output.append(consoleOutput);
-      command.focus();
-      consoleElement.scrollTo(0, consoleElement.scrollHeight);
-      const old = history.pop();
-      history.push(command.value);
-      if (typeof old !== "undefined") {
-        history.push(old);
-      }
-      historyPos = history.length - 1;
-      command.value = "";
-    });
-  });
-
-  command.addEventListener("keydown", (e) => {
-    if (e.key === "l" && e.ctrlKey) {
-      output.innerText = "--- screen cleared ---";
-    } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-      // Handle up arrow and down arrow.
-      if (e.key === "ArrowUp" && historyPos > 0) {
-        e.preventDefault();
-        historyPos--;
-      } else if (e.key === "ArrowDown" && historyPos < history.length - 1) {
-        historyPos++;
-      }
-      command.value = history[historyPos];
-    }
-    return false;
-  });
-
-  return consoleElement;
-}
-
-function addEventListenersToElements(elements, event, listener) {
-  elements.forEach((el) => el.addEventListener(event, listener));
-}
-
-/**
- * Add extra info
- */
-function addInfoPrompt(elements) {
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].innerHTML =
-      "<p>To switch between the interactive traceback and the plaintext " +
-      'one, you can click on the "Traceback" headline. From the text ' +
-      "traceback you can also create a paste of it. " +
-      (!EVALEX
-        ? ""
-        : "For code execution mouse-over the frame you want to debug and " +
-          "click on the console icon on the right side." +
-          "<p>You can execute arbitrary Python code in the stack frames and " +
-          "there are some extra helpers available for introspection:" +
-          "<ul><li><code>dump()</code> shows all variables in the frame" +
-          "<li><code>dump(obj)</code> dumps all that's known about the object</ul>");
-    elements[i].classList.remove("nojavascript");
-  }
-}
-
-function addConsoleIconToFrames(frames) {
-  for (let i = 0; i < frames.length; i++) {
-    let consoleNode = null;
-    const target = frames[i];
-    const frameID = frames[i].id.substring(6);
-
-    for (let j = 0; j < target.getElementsByTagName("pre").length; j++) {
-      const img = createIconForConsole();
-      img.addEventListener("click", (e) => {
-        e.stopPropagation();
-        consoleNode = openShell(consoleNode, target, frameID);
-        return false;
-      });
-      target.getElementsByTagName("pre")[j].append(img);
-    }
-  }
-}
-
-function slideToggle(target) {
-  target.classList.toggle("active");
-}
-
-/**
- * toggle traceback types on click.
- */
-function addToggleTraceTypesOnClick(elements) {
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].addEventListener("click", () => {
-      document.querySelector("div.traceback").classList.toggle("hidden");
-      document.querySelector("div.plain").classList.toggle("hidden");
-    });
-    elements[i].style.cursor = "pointer";
-    document.querySelector("div.plain").classList.toggle("hidden");
-  }
-}
-
-function createConsole() {
-  const consoleNode = document.createElement("pre");
-  consoleNode.classList.add("console");
-  consoleNode.classList.add("active");
-  return consoleNode;
-}
-
-function createConsoleOutput() {
-  const output = document.createElement("div");
-  output.classList.add("output");
-  output.innerHTML = "[console ready]";
-  return output;
-}
-
-function createConsoleInputForm() {
-  const form = document.createElement("form");
-  form.innerHTML = "&gt;&gt;&gt; ";
-  return form;
-}
-
-function createConsoleInput() {
-  const command = document.createElement("input");
-  command.type = "text";
-  command.setAttribute("autocomplete", "off");
-  command.setAttribute("spellcheck", false);
-  command.setAttribute("autocapitalize", "off");
-  command.setAttribute("autocorrect", "off");
-  return command;
-}
-
-function createIconForConsole() {
-  const img = document.createElement("img");
-  img.setAttribute("src", makeDebugURL({cmd: "resource", f: "console.png"}));
-  img.setAttribute("title", "Open an interactive python shell in this frame");
-  return img;
-}
-
-function createExpansionButtonForConsole() {
-  const expansionButton = document.createElement("a");
-  expansionButton.setAttribute("href", "#");
-  expansionButton.setAttribute("class", "toggle");
-  expansionButton.innerHTML = "&nbsp;&nbsp;";
-  return expansionButton;
-}
-
-function createInteractiveConsole() {
-  const target = document.querySelector("div.console div.inner");
-  while (target.firstChild) {
-    target.removeChild(target.firstChild);
-  }
-  openShell(null, target, 0);
-}
-
-function handleConsoleSubmit(e, command, frameID) {
-  // Prevent page from refreshing.
-  e.preventDefault();
-
-  return new Promise((resolve) => {
-    fetch(makeDebugURL({cmd: command.value, frm: frameID}))
-      .then((res) => {
-        return res.text();
-      })
-      .then((data) => {
-        const tmp = document.createElement("div");
-        tmp.innerHTML = data;
-        resolve(tmp);
-
-        // Handle expandable span for long list outputs.
-        // Example to test: list(range(13))
-        let wrapperAdded = false;
-        const wrapperSpan = document.createElement("span");
-        const expansionButton = createExpansionButtonForConsole();
-
-        tmp.querySelectorAll("span.extended").forEach((spanToWrap) => {
-          const parentDiv = spanToWrap.parentNode;
-          if (!wrapperAdded) {
-            parentDiv.insertBefore(wrapperSpan, spanToWrap);
-            wrapperAdded = true;
-          }
-          parentDiv.removeChild(spanToWrap);
-          wrapperSpan.append(spanToWrap);
-          spanToWrap.hidden = true;
-
-          expansionButton.addEventListener("click", (event) => {
-            event.preventDefault();
-            spanToWrap.hidden = !spanToWrap.hidden;
-            expansionButton.classList.toggle("open");
-            return false;
-          });
-        });
-
-        // Add expansion button at end of wrapper.
-        if (wrapperAdded) {
-          wrapperSpan.append(expansionButton);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-    return false;
-  });
-}
-
-function fadeOut(element) {
-  element.style.opacity = 1;
-
-  (function fade() {
-    element.style.opacity -= 0.1;
-    if (element.style.opacity < 0) {
-      element.style.display = "none";
-    } else {
-      requestAnimationFrame(fade);
-    }
-  })();
-}
-
-function fadeIn(element, display) {
-  element.style.opacity = 0;
-  element.style.display = display || "block";
-
-  (function fade() {
-    let val = parseFloat(element.style.opacity) + 0.1;
-    if (val <= 1) {
-      element.style.opacity = val;
-      requestAnimationFrame(fade);
-    }
-  })();
-}
-
-function docReady(fn) {
-  if (document.readyState === "complete" || document.readyState === "interactive") {
-    setTimeout(fn, 1);
-  } else {
-    document.addEventListener("DOMContentLoaded", fn);
-  }
-}
-        Ô}  xÔ}+‚   20260721100211-8l·}  ÓĞCä[   http://127.0.0.1:5003/employee/101/shubham/BCS/?__debugger__=yes&cmd=resource&f=debugger.js      T'  docReady(() => {
-  if (!EVALEX_TRUSTED) {
-    initPinBox();
-  }
-  // if we are in console mode, show the console.
-  if (CONSOLE_MODE && EVALEX) {
-    createInteractiveConsole();
-  }
-
-  const frames = document.querySelectorAll("div.traceback div.frame");
-  if (EVALEX) {
-    addConsoleIconToFrames(frames);
-  }
-  addEventListenersToElements(document.querySelectorAll("div.detail"), "click", () =>
-    document.querySelector("div.traceback").scrollIntoView(false)
-  );
-  addToggleFrameTraceback(frames);
-  addToggleTraceTypesOnClick(document.querySelectorAll("h2.traceback"));
-  addInfoPrompt(document.querySelectorAll("span.nojavascript"));
-  wrapPlainTraceback();
-});
-
-function addToggleFrameTraceback(frames) {
-  frames.forEach((frame) => {
-    frame.addEventListener("click", () => {
-      frame.getElementsByTagName("pre")[0].parentElement.classList.toggle("expanded");
-    });
-  })
-}
-
-
-function wrapPlainTraceback() {
-  const plainTraceback = document.querySelector("div.plain textarea");
-  const wrapper = document.createElement("pre");
-  const textNode = document.createTextNode(plainTraceback.textContent);
-  wrapper.appendChild(textNode);
-  plainTraceback.replaceWith(wrapper);
-}
-
-function makeDebugURL(args) {
-  const params = new URLSearchParams(args)
-  params.set("s", SECRET)
-  return `?__debugger__=yes&${params}`
-}
-
-function initPinBox() {
-  document.querySelector(".pin-prompt form").addEventListener(
-    "submit",
-    function (event) {
-      event.preventDefault();
-      const btn = this.btn;
-      btn.disabled = true;
-
-      fetch(
-        makeDebugURL({cmd: "pinauth", pin: this.pin.value})
-      )
-        .then((res) => res.json())
-        .then(({auth, exhausted}) => {
-          if (auth) {
-            EVALEX_TRUSTED = true;
-            fadeOut(document.getElementsByClassName("pin-prompt")[0]);
-          } else {
-            alert(
-              `Error: ${
-                exhausted
-                  ? "too many attempts.  Restart server to retry."
-                  : "incorrect pin"
-              }`
-            );
-          }
-        })
-        .catch((err) => {
-          alert("Error: Could not verify PIN.  Network error?");
-          console.error(err);
-        })
-        .finally(() => (btn.disabled = false));
-    },
-    false
-  );
-}
-
-function promptForPin() {
-  if (!EVALEX_TRUSTED) {
-    fetch(makeDebugURL({cmd: "printpin"}));
-    const pinPrompt = document.getElementsByClassName("pin-prompt")[0];
-    fadeIn(pinPrompt);
-    document.querySelector('.pin-prompt input[name="pin"]').focus();
-  }
-}
-
-/**
- * Helper function for shell initialization
- */
-function openShell(consoleNode, target, frameID) {
-  promptForPin();
-  if (consoleNode) {
-    slideToggle(consoleNode);
-    return consoleNode;
-  }
-  let historyPos = 0;
-  const history = [""];
-  const consoleElement = createConsole();
-  const output = createConsoleOutput();
-  const form = createConsoleInputForm();
-  const command = createConsoleInput();
-
-  target.parentNode.appendChild(consoleElement);
-  consoleElement.append(output);
-  consoleElement.append(form);
-  form.append(command);
-  command.focus();
-  slideToggle(consoleElement);
-
-  form.addEventListener("submit", (e) => {
-    handleConsoleSubmit(e, command, frameID).then((consoleOutput) => {
-      output.append(consoleOutput);
-      command.focus();
-      consoleElement.scrollTo(0, consoleElement.scrollHeight);
-      const old = history.pop();
-      history.push(command.value);
-      if (typeof old !== "undefined") {
-        history.push(old);
-      }
-      historyPos = history.length - 1;
-      command.value = "";
-    });
-  });
-
-  command.addEventListener("keydown", (e) => {
-    if (e.key === "l" && e.ctrlKey) {
-      output.innerText = "--- screen cleared ---";
-    } else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-      // Handle up arrow and down arrow.
-      if (e.key === "ArrowUp" && historyPos > 0) {
-        e.preventDefault();
-        historyPos--;
-      } else if (e.key === "ArrowDown" && historyPos < history.length - 1) {
-        historyPos++;
-      }
-      command.value = history[historyPos];
-    }
-    return false;
-  });
-
-  return consoleElement;
-}
-
-function addEventListenersToElements(elements, event, listener) {
-  elements.forEach((el) => el.addEventListener(event, listener));
-}
-
-/**
- * Add extra info
- */
-function addInfoPrompt(elements) {
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].innerHTML =
-      "<p>To switch between the interactive traceback and the plaintext " +
-      'one, you can click on the "Traceback" headline. From the text ' +
-      "traceback you can also create a paste of it. " +
-      (!EVALEX
-        ? ""
-        : "For code execution mouse-over the frame you want to debug and " +
-          "click on the console icon on the right side." +
-          "<p>You can execute arbitrary Python code in the stack frames and " +
-          "there are some extra helpers available for introspection:" +
-          "<ul><li><code>dump()</code> shows all variables in the frame" +
-          "<li><code>dump(obj)</code> dumps all that's known about the object</ul>");
-    elements[i].classList.remove("nojavascript");
-  }
-}
-
-function addConsoleIconToFrames(frames) {
-  for (let i = 0; i < frames.length; i++) {
-    let consoleNode = null;
-    const target = frames[i];
-    const frameID = frames[i].id.substring(6);
-
-    for (let j = 0; j < target.getElementsByTagName("pre").length; j++) {
-      const img = createIconForConsole();
-      img.addEventListener("click", (e) => {
-        e.stopPropagation();
-        consoleNode = openShell(consoleNode, target, frameID);
-        return false;
-      });
-      target.getElementsByTagName("pre")[j].append(img);
-    }
-  }
-}
-
-function slideToggle(target) {
-  target.classList.toggle("active");
-}
-
-/**
- * toggle traceback types on click.
- */
-function addToggleTraceTypesOnClick(elements) {
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].addEventListener("click", () => {
-      document.querySelector("div.traceback").classList.toggle("hidden");
-      document.querySelector("div.plain").classList.toggle("hidden");
-    });
-    elements[i].style.cursor = "pointer";
-    document.querySelector("div.plain").classList.toggle("hidden");
-  }
-}
-
-function createConsole() {
-  const consoleNode = document.createElement("pre");
-  consoleNode.classList.add("console");
-  consoleNode.classList.add("active");
-  return consoleNode;
-}
-
-function createConsoleOutput() {
-  const output = document.createElement("div");
-  output.classList.add("output");
-  output.innerHTML = "[console ready]";
-  return output;
-}
-
-function createConsoleInputForm() {
-  const form = document.createElement("form");
-  form.innerHTML = "&gt;&gt;&gt; ";
-  return form;
-}
-
-function createConsoleInput() {
-  const command = document.createElement("input");
-  command.type = "text";
-  command.setAttribute("autocomplete", "off");
-  command.setAttribute("spellcheck", false);
-  command.setAttribute("autocapitalize", "off");
-  command.setAttribute("autocorrect", "off");
-  return command;
-}
-
-function createIconForConsole() {
-  const img = document.createElement("img");
-  img.setAttribute("src", makeDebugURL({cmd: "resource", f: "console.png"}));
-  img.setAttribute("title", "Open an interactive python shell in this frame");
-  return img;
-}
-
-function createExpansionButtonForConsole() {
-  const expansionButton = document.createElement("a");
-  expansionButton.setAttribute("href", "#");
-  expansionButton.setAttribute("class", "toggle");
-  expansionButton.innerHTML = "&nbsp;&nbsp;";
-  return expansionButton;
-}
-
-function createInteractiveConsole() {
-  const target = document.querySelector("div.console div.inner");
-  while (target.firstChild) {
-    target.removeChild(target.firstChild);
-  }
-  openShell(null, target, 0);
-}
-
-function handleConsoleSubmit(e, command, frameID) {
-  // Prevent page from refreshing.
-  e.preventDefault();
-
-  return new Promise((resolve) => {
-    fetch(makeDebugURL({cmd: command.value, frm: frameID}))
-      .then((res) => {
-        return res.text();
-      })
-      .then((data) => {
-        const tmp = document.createElement("div");
-        tmp.innerHTML = data;
-        resolve(tmp);
-
-        // Handle expandable span for long list outputs.
-        // Example to test: list(range(13))
-        let wrapperAdded = false;
-        const wrapperSpan = document.createElement("span");
-        const expansionButton = createExpansionButtonForConsole();
-
-        tmp.querySelectorAll("span.extended").forEach((spanToWrap) => {
-          const parentDiv = spanToWrap.parentNode;
-          if (!wrapperAdded) {
-            parentDiv.insertBefore(wrapperSpan, spanToWrap);
-            wrapperAdded = true;
-          }
-          parentDiv.removeChild(spanToWrap);
-          wrapperSpan.append(spanToWrap);
-          spanToWrap.hidden = true;
-
-          expansionButton.addEventListener("click", (event) => {
-            event.preventDefault();
-            spanToWrap.hidden = !spanToWrap.hidden;
-            expansionButton.classList.toggle("open");
-            return false;
-          });
-        });
-
-        // Add expansion button at end of wrapper.
-        if (wrapperAdded) {
-          wrapperSpan.append(expansionButton);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-    return false;
-  });
-}
-
-function fadeOut(element) {
-  element.style.opacity = 1;
-
-  (function fade() {
-    element.style.opacity -= 0.1;
-    if (element.style.opacity < 0) {
-      element.style.display = "none";
-    } else {
-      requestAnimationFrame(fade);
-    }
-  })();
-}
-
-function fadeIn(element, display) {
-  element.style.opacity = 0;
-  element.style.display = display || "block";
-
-  (function fade() {
-    let val = parseFloat(element.style.opacity) + 0.1;
-    if (val <= 1) {
-      element.style.opacity = val;
-      requestAnimationFrame(fade);
-    }
-  })();
-}
-
-function docReady(fn) {
-  if (document.readyState === "complete" || document.readyState === "interactive") {
-    setTimeout(fn, 1);
-  } else {
-    document.addEventListener("DOMContentLoaded", fn);
-  }
-}
-Ó˜ÀÙ¾   ³         †ËÒ      docReady   CD      EVALEX_TRUSTED     $§
-      initPinBox     ‘h!Q      CONSOLE_MODE   >0ò      EVALEX     Í0¡      createInteractiveConsole   oT*      frames     ¸O€      document   #¥      querySelectorAll	   dCà      div.traceback div.frame
-    :ÑÆ'      addConsoleIconToFrames     åiQè      addEventListenersToElements    œMœh
-      div.detail     ŸªâX      click      Ø1:ò      querySelector      ÃHşÑ      div.traceback      rccé      scrollIntoView     ;Ã™Å      addToggleFrameTraceback    l9¶~      addToggleTraceTypesOnClick     /Ø€      h2.traceback   Mñ¥¯      addInfoPrompt      !oã0      span.nojavascript      ¦åI      wrapPlainTraceback      rO      addEventListener   XFZ      getElementsByTagName   ú4Ã      pre    ËêXÔ      parentElement       Ù¶z	      classList      Ogµ      toggle     $H¿      expanded   ¢ß      plainTraceback     ùXœ      div.plain textarea      YCù¸      wrapper!    DC      createElement"      ¯)bÍ      textNode#   6!†Ì      createTextNode$     bÈÅe      textContent%    ­$~      appendChild&    ¦S¾¸      replaceWith'    ÅŸ[l      makeDebugURL(   ÜÙœÉ      args)   ËË&<      params*     ´­y^      URLSearchParams+    àØw:      SECRET,     *„‡ë      ?__debugger__=yes&-     ú`ş•      .pin-prompt form.   dô¶      submit/     II·P      event0      B9ºÀ      preventDefault1     h_˜0      btn2    zƒw      disabled3   ø$­,      fetch4      Å¤&R      cmd5    + ¤      pinauth6    Ú%C      pin7    »:0      res8    ¥.Y.      auth9   ºíÏï	      exhausted:      ĞcH:      fadeOut;    ÿåÀ      getElementsByClassName<     O76B
-      pin-prompt=     Òï¢Z      alert>      É7:      Error: ?    Bõdä,      too many attempts.  Restart server to retry.@   Ÿ"½P      incorrect pinA      ¼ğo˜      errB    æ›Õ,,      Error: Could not verify PIN.  Network error?C   şQ1      consoleD    ştuW      errorE      mŠø¬      promptForPinF   Ù°ñ      printpinG   ¸h	ş	      pinPromptH      å„U"      fadeInI     ºÔuÃ      .pin-prompt input[name="pin"]J      KÌí      focusK      µå#H	      openShellL      QµFÿ      consoleNodeM    8¡Ø      frameIDN    °;Ş      slideToggleO    Qè=š
-      historyPosP     ÿjh      historyQ    RUx      consoleElementR     bs¾ğ      createConsoleS      [>Ãÿ      outputT     z`h1      createConsoleOutputU    *gÒÛ      formV   *ï´      createConsoleInputFormW     Ó¥ƒ§      commandX    °F²\      createConsoleInputY     ¥_ÏÓ
-      parentNodeZ     ÜB-      append[     óÊáø      handleConsoleSubmit\    x}Š      consoleOutput]      Vœ×Ø      scrollTo^   LsA¿      scrollHeight_   fndd      old`    ¦i4      popa    ğ„u2      pushb   ºÓ      keydownc    Bü¿;      keyd    
-@¥&      ctrlKeye    ­	v	      innerTextf      @é}      --- screen cleared ---g     çQÔ      ArrowUph    )Ò	      ArrowDowni      _Tôï      elementsj   Êl%„      listenerk   QÃ:	      innerHTMLu      *N·Æ      removev     ŸxM      nojavascriptw   ßYã	      substringx      e œ      imgy    ¥$wâ      createIconForConsolez   õ/F/      stopPropagation{    Œ¨Px      active|     „ÛèW      hidden}     ID  	      div.plain~      ÿÆN      cursor     ùéØ9      pointer€    œ³æÙ      div    Òõ      [console ready]‚    ‘dÌu      &gt;&gt;&gt; ƒ      ˆ3Àµ      text„   —{ÚD      setAttribute…   k÷Ğ      autocomplete†   úø…ß      off‡    `G
-      spellcheckˆ     »êù      autocapitalize‰     0å^      autocorrectŠ    œ·È›      src‹    ø75      resourceŒ   ù5Ô¤      console.png    ÒE      title      3˜%‹.      Open an interactive python shell in this frame     Ìn-g      createExpansionButtonForConsole    4ÕÔ      expansionButton‘    »©`X      href’   ÅÙf_      &nbsp;&nbsp;“   zÑ³’      div.console div.inner”      ~Xßº
-      firstChild•     ùúK      removeChild–    Î\7      frm—    6—(      data˜   ó&eö      tmp™    jGûë      wrapperAddedš   ¡…É1      wrapperSpan›    ±4PB      spanœ   ÙÊÂ      span.extended      ê9Ò
-      spanToWrap     Ø	      parentDivŸ      åLÉ2      insertBefore    —x5      open¡   ßueÉ      opacity¢    &o»7      fade£   e}Ÿ      display¤    ,½      none¥   ·Š¬R      requestAnimationFrame¦      Ÿàû      block§      &Ú›      val¨    ¹UŸ•
-      readyState©     D•È‡      completeª   áî¤t      interactive«    3AtÙ
-      setTimeout¬     KjH      DOMContentLoaded­   €ß}g     For code execution mouse-over the frame you want to debug and click on the console icon on the right side.<p>You can execute arbitrary Python code in the stack frames and there are some extra helpers available for introspection:<ul><li><code>dump()</code> shows all variables in the frame<li><code>dump(obj)</code> dumps all that's known about the object</ul>®    §¦N¬      <p>To switch between the interactive traceback and the plaintext one, you can click on the "Traceback" headline. From the text traceback you can also create a paste of it. ¯   n‘?      addToggleFrameTraceback/<°      ˜Øê      addToggleFrameTraceback/</<±    ÃPŠ»      initPinBox/<²   içeÓ      initPinBox/</<³     G‰jË      openShell/<´    ªR||      openShell/</<µ      oi§"      addEventListenersToElements/<¶      Ba8      addConsoleIconToFrames/<·    «,A      addToggleTraceTypesOnClick/<¸   xJ¯Û      handleConsoleSubmit/<¹      w7åÔ      handleConsoleSubmit/</<º    €Q+      handleConsoleSubmit/</</<»      ç+	      handleConsoleSubmit/</</</<     .   –  G   .              ï%,‰                                                                                                                                                                            	      	               
-           
-      
-                 
-                 
-                                                                                                                                                                                                                                                                                                                                                                     "                 #                                   %                                   '                                   )                                   +                                   -                                    /                             !      1                            "      3          #      4           $      4           %      6                7          &      8                 9           '      4           (                 )      <                =           *                 +      ?                @           ,      A                             -                        D                 E                 ³OŒc             '    E  K      
-  N    R  T  V  X  y      [  :  H                                 Ã  `                                               "               (            )                              /  Œ             1  P             7                  8  9               A                                            G               L    M  P         O  PP  PQ  PS  PU  W  P             e               \            _               e               i  /  Pj  P             •              i           i                          i           L  P `M  P         j            x               e                              i           i                                            L                            S                            U                            W                            x                                                                       e  W  PM  P             á `             7               —           ™  P˜  š  P  P               P                         /               A                 `          ¢                                 `£            ¢                           §               ×                                             ¯Â0°Iô$KE®úš   
-      4  6         4     
-     4  f     
-    4  –  ‡&Õª!«!.   H     ÏÏÌeH                            Ü   ½    o   y á§e	ÿÿÿÿP4€ XP€€€¬  2!¥œ                  %       ²³   á½      ™   ½    y  á™   ½      ™   á½   ™   œ   ™   ½    y  á™
-   ½   ãL   æ	   u ³   á½   œ   ™   ½
-    À   y á™   ½    ½   ãL   æ   u    o   y á½    À   y á½    ½   ãL   æ   u y á½    ½   ãL   æ   u y á½    y  áÔ§ &`/`O`¤ `O	`‘ 	P(`/`ÿÿÿÿPI`‘ 	P)ÿÿÿÍPD`ÿÿÿÿP$`‘ 	PÿÿÿöP$`‘ 	PÿÿÿöP$`P¬           ÿÿÿÿP   aSŞ÷P                              ½   ãL   æ   u ãL   æu ¤ `‘ 	PP€€€D   ı»3D                            ¾  ãL   æo   y á§ `
-ÿÿÿøP4P€X   *ŸÍX   $   	                     ¿  Ğ   áÃ   ãL   æ   o   y á§)`‘  ÿÿÿæPDP€€€`   Ê¶oA`   1                          Ã   ãL   æ   u ML   L   ãL   æ   y á§ `‘ P› 7P$Pğ   ÿEÆ†à   …                        ²³   ³  ³  á½   ãL   æ   u ³   á½   ãL   æ   u ³  á½   ãL   æÀ   L   u ³  áÀ  ãL	   æÀ  y áÀ   ãL
-   æÀ  y áÔ§ .`‘ 	P(`‘ 	P(`	ÿÿÿñP(`ÿÿÿôP$`ÿÿÿôPP€€€ğ          „   ÿÿÿÿ¨   òŒ3*ˆ   D                       ²³   á½   ‚¾  å  ƒ ³   áÀ   ãL   æ   ½   y á   À   3(¦Ô§Ô§ &`ÿÿÿì(` ÿÿÿ÷P$`T¨          C   ÿÿÿÿ    A          `   
-]¢í`   +                          ½   ãL   æ   u ãL   æ   o   y á§ `‘ 	P%5 A.P4"P€(  m;¿  §                      àÏ   áÒ   ¾  ãL   æy  áÀ   L   µ   áÃ   N   á½    ½    ;      >	   À   L
-   L   >
-   u u ãL   æo   u ãL   æo   u ãL   æo   u ãL   æo   y áÓ§%`
-P$`/`L`&	
-“ ÿÿÿâPCPJÿÿÿûP*ÿÿÿûPJÿÿÿúPJÿÿÿøP%P€(        ›   ÿÿÿÿ8   Ü²éà8                            ¾  ãL   æu  ¤ 	`
-P€è   Vãç³è                           ¾  gãL   Ï   áãL   Ï  ááÀ   œ;   ™   ¹   Ì   á½    ½   ãL   æ   u My á›B   ™   ½    	   À  œ   ™   
-   ›   ™      ™   3(y á™   §› `.`,`‘ 	PÿÿÿöP `&%LPI	P€€X   ÛçìÔX   #                         ½       y á½   ãL   æ¾  y á§ `P$`ÿÿÿúP$	P8   yˆ×Y8                             Ã   ·   N   ¤ ` ô   Ïm·Øä   †                        ½   {   ™   ²³   á½    ½    ;      >   u y á½   ãL	   æ
-   u M³   á½    À   y á½   ãL   æ   u ãL   æy  áÔ™   § `&`
-ÿÿÿòPÿÿÿÿP$`‘ 	P*`ÿÿÿÿP$`‘ 	P
-/P:Pô         q   ÿÿÿÿ,  9¬ü  K  	             !      ¿ Ğ   áÒ   ²³   á½    y  á¾  œ   ™   ½    ¾  y á¾  ¦Ó§™   µ   áj      k    µ   á½    u  µ   á½    u  µ   á½    u  ³   á½    u  µ   á¾ L	   ãL
-   æÃ   y áÃ   ãL   æÃ   y áÃ   ãL   æÀ   y áÀ   ãL   æÃ   y áÃ   ãL   æy  á½    Ã   y áÀ   ãL   æ   o   y áÃ   ãL   æ   o   y áÃ   ¦Ó§Ó§	+`*`-`ÿÿÿÿP$`34H`'`• `/`/`.`O`ÿÿÿôP$`ÿÿÿùP$`ÿÿÿùP$`ÿÿÿùP$`P$`ÿÿÿÿPD`  ÿÿÿåPD#`‘ $ÿÿÿäPD3`T€€,        <  ÿÿÿÿ    =              H         h   .`ÀFh   ,                         ½    ¾  Ã   ·   Ã  u ãL   æo   y á§ `
-	ÿÿÿóP
-ÿÿÿûPDPd  @‘hiT  Ş                       ²³   áÃ   ·   ãL   æ¾  y áÃ   ·   ãL   æy  áÃ   ·   ãL   æÃ   L   y áÃ   ·   ãL   æu  ³   áÃ   ãL   æÃ   L   y áÀ   €œ   ™   Ã   ãL   æÀ   y á™   Ã   L	   )Ã   ·   áĞ   áÃ   
-   N   áÔ§ &`‘ ÿÿÿùP$`‘ P$`’ 
-ÿÿÿôP$`‘ P(`
-ÿÿÿûP$` 	`ÿÿÿûPI	` `‘ P€€€d         İ   ÿÿÿÿÀ  EºNÀ  k                         ¾  L         ™   á¾  L   ™   œ$   ™   Ã   ·      N   á›  ™   ¾  L      Ÿ   ™	   á¾  L      ™   œè   ™   ¾  L         ™   áÃ   ·    ™   œ/   ™   ¾  ãL   æy  áÃ   ·   2+Ğ   á›`   ™   ¾  L      '   ™   áÃ   ·   Ã   ·   L	   )™   œ   ™   Ã   ·   2*Ğ   á™   Ã   ·   Ã   ·   Ã   ·   MN
-   á™    ¤§ 	`° `Ÿ `¶@`´ 	`
-P$	`œ `£ &¡ 	`—@`ª@`!Q€€X   š²Å\X   &                        ¿ Ğ   á¿ Ğ   á¾  ãL   æo   y á§’ `
-ÿÿÿøPP€€€H   ãğRŒH                            ¾  ãL   æÃ   Ã   u ¤ `
-ÿÿÿèP   6ŒH(è   ™                       $²³   á³   áš    À   ¾  L   œs   ™   ¾  À   M   ½      ™      ›   ™      ™   (N   á¾  À   ML   ãL	   æ
-   y áÀ   2*Ï   á›ÿÿÿ™   Ô§ `f“ `E‘@`™ PD(`–0P€  ø          ˜   ÿÿÿÿ          †     Õ±A6¤                         $²³   á³   áš    À   ¾  L   œú   ™   Ò   µ   á¾  À   Mµ   á¾  À   ML   ãL   æu µ   á²³  á³  áš   À  Ã   ãL   æ   u L   œp   ™   ²³  á½
-    u  ³  áÀ  ãL   æ   o   y áÃ   ãL   æ   u À  MãL   æÀ  y áÔÀ  2*Ï  á›qÿÿÿ™   ÔÓÀ   2*Ï   á›øşÿÿ™   Ô§ `f“ %`'`.`– PI
-`f‘ P“ )&`.` ÿÿÿæPD`‘ P&ÿÿÿùPED`—@&`–0P€€€  ä           ÿÿÿÿ   .   Û          b   ¦      	   œ   V             n   ”               |   '©âğ|   >                         ¾  ãL   æy  á½    Ã   ·   Ã   ·   Ã   ·   u Ğ   á¤§ 	`
-P$	`
-
-
-ÿÿÿáP)	`!Q€€D   ¾R<bD                            ¾  L   ãL   æ   y á§ `” PP€  Ü Óø                          $²³   á³   áš    À   ¾  L   œx   ™   ¾  À   MãL   æ   o   y á¾  À   ML      N   á½	   ãL
-   æ   u L   ãL   æ   y áÀ   2*Ï   á›zÿÿÿ™   Ô§ `f“ `” &ÿÿÿæPD`˜ `‘ 	P” %PD(`–0	P€€              ÿÿÿÿ          ‹      yí   S                          ½   ãL   æ   u L   ãL   æ   y á½   ãL   æ   u L   ãL   æ   y á§ `‘ 	P” )P$`‘ 	P” %P$P€€€¼   ‚×2œ   Z                 	       ²³   á½   ãL   æ   u ³   áÀ   L   ãL   æ   y áÀ   L   ãL   æ   y áÀ   ¦Ô§Ô§ &`‘ 	P(`• P$`• P$`T€¼          Y   ÿÿÿÿ    W          °   
-+   P                        ²³   á½   ãL   æ   u ³   áÀ   L   ãL   æ   y áÀ      N	   áÀ   ¦Ô§Ô§ &`‘ 	P(`• P$`/`T€€€°          O   ÿÿÿÿ    M             fÄÿp   7                        ²³   á½   ãL   æ   u ³   áÀ      N   áÀ   ¦Ô§Ô§ &`‘ 	P(`/`T€€€          6   ÿÿÿÿ    4            ëå•Nì   —                        ²³   á½   ãL   æ   u ³   áÀ      N   áÀ   ãL   æ   	   y áÀ   ãL   æ
-   y áÀ   ãL   æ   	   y áÀ   ãL   æ   	   y áÀ   ¦Ô§Ô§ &`‘ 	P(`/`• P$`‘ P$`• P$`• P$`T€€€         –   ÿÿÿÿ    ”          ì   ØÌ   w                        ²³   á½   ãL   æ   u ³   áÀ   ãL   æ   ½    ;   	   >
-      >   u y áÀ   ãL   æ      y áÀ   ¦Ô§Ô§ &`‘ 	P(` 
-
-ÿÿÿáPÿÿÿìP$`• P$`T€€€ì          v   ÿÿÿÿ    t          Ğ   !´w°   i                        ²³   á½   ãL   æ   u ³   áÀ   ãL   æ      y áÀ   ãL   æ   	   y áÀ   
-   N   áÀ   ¦Ô§Ô§ &`‘ 	P(`• P$`• P$`/`T€€€Ğ          h   ÿÿÿÿ    f          Ü   jáù¼   l                 
-       $²³   á½   ãL   æ   u ³   áš   À   L   œ'   ™   À   ãL   æÀ   L   y á›Ïÿÿÿ™   ½    À   y áÔ§ &`‘ 	P(
-f“ `	ÿÿÿôPN`ÿÿÿùPP€Ü   Ì          k   ÿÿÿÿ          6   l   u§'l   4                        ¿ Ğ   á¿ Ğ   á¾  ãL   æy  á½   ‚o   å  ƒ ¤§’@`
-PD`	ÿÿÿôP30QÄ   ÊÍ6QÄ   j   	                     ¿  Ğ   á½    ½    ;   Ã  L   >   Ã  >   u u ãL   æo   u ãL   æo	   u ãL
-   æo   y á¤§)`
-ÿÿÿŞPÿÿÿÿP*ÿÿÿûPJÿÿÿûPJ'ÿÿÿúPD*`!Q€<   â„<                            ¾  ãL   æu  ¤§ 	`
-P#Q€€€<  L¡Å‡,  ½                       Ò   ²³   á½   ãL   æ   u ³   áÀ   ¾  N   áÃ   À   y áµ   á½   ãL   æ   u µ   á½    u  µ   áÀ   ãL   æ	   u ãL
-   æo   y áÃ   œ   ™   Ã   ãL   æÃ   y á™   Ó§ 
-+`‘ 	P(	`-	`ÿÿÿÿPD`'`‘ 	P)!`O	` P
-*ÿÿÿøPD`/`ÿÿÿùPJ!P€€<        ·   ÿÿÿÿ4  8ã11$  ·   	                   ¿  Ğ   á²³   áÃ   L   ³   áÃ  ·  /   ™   À   ãL   æÃ  ·  Ã   y áĞ  á™   À   ãL   æÃ   y áÃ  ·  ãL   æÃ   y áÃ   N   áÃ  ·  ãL   æ   o	   y áÔ§	&`/`” `
-ÿÿÿæP$`L`ÿÿÿôP$`‘ ÿÿÿùP$`L
-`– *ÿÿÿæPE	P€€€4     	   ­   ÿÿÿÿ€   ¥Pó8€   F                         ¾  ãL   æy  áÃ   Ã   L   N   áÃ  ·  L   ãL   æ   y á¤§ `
-P$`‘ `› P$`!QD   H³mD                            ½   ãL   æ¾  y á§ 	`ÿÿÿúP$P€T   ù.ûÑT   %   	                     ¿  Ğ   áÃ   L   N   áo    y  á§)`‘@`F
-PP¬   yş:4¬   l                         Ã   L   ãL   
-š™™™™™¹?)0N   áÃ   L   L   œ$   ™   Ã   L      N   á›   ™
-   ½    Èy á™   § `¡ 	`› `Ÿ `ÿÿÿÿPIP€€€€   ÕÏl€   M   	                     ¿  Ğ   áÃ   L   N   áÃ   L   ¾ Ÿ   ™   á   ™   N   áo    y  á§)`‘ `¨@`F
-PPÀ   €Ü°   c                       ²³   á½    Ã   L   L   u 
-š™™™™™¹?(³   áÀ   !œ)   ™   Ã   L   À   N   á½    Èy á™   Ô§ &`ÿÿÿÿP’ 	` `” `ÿÿÿÿPJP€€€À          b   ÿÿÿÿ°   rÉ]/°   p                         ½   L      Ÿ   ™   á½   L      ™   œ   ™   ½    ¾  y á›"   ™
-   ½   ãL   æ   ¾  y á™   § `º `ÿÿÿÿP `‘ .ÿÿÿÛP9P3õØ  `              `      p  `¾     p  `  `      !    #  $  %  &    `  `*  ğ  s  +  ,    `C    `8  9    :    ;  <  =  >  ?  @    `=  B  C  D    `2  	  `
-  `0  1  2  3  '     @5  4  6  X    
-  p  p?     p°     p  `    -    .  	  p  `    `3  '    @F  4    ;  <  H    I  J    `  `Z  J  ]  ^  `  a  X  J  ‘     `[      p  `c  l  d  f  e  g  h  0  J  X    `  `E  N  ‘   R  T  V  X  Y  %  Z  J    .    pb    p  `    `¾     p  `  `J  ®    ‘   ­  k    u  v     `z  K    `  `J    ` w    `      `y        pZ  !  `    {  $  `          |  }  "  `#  `J        p    ~      }      |  %  `&  `  !         C  {  '  `(  `  !  €       S    k  )  `*  `  !  U  ‚  k  +  `,  `  !    ƒ  8  „  …  †  ‡  ˆ  ‰  -  `.  `  !  x  „  Š  '    @‹  4  Œ  f      /  `0  `  !  a  „  ‘  #  A     ’  k  1  `2  `    “  ”  •  K  5  `ƒ  :  `0  |         8  `9  `Y  Ÿ  •  Z  |      '  p6  `7  `  !  €  k  ›      œ  ¾   &  pZ  ;  `C  D  4  `3  '    @X  4  –    $  p%  p?   (  p3  `0  Å  #  p=  `>  `  ¡  ¤  £  ¥  <  `  ¡  *  p@  `A  `B  `²    ¡  ¥  ?  `  ¡  ¦  £  ,  pC  `  ¨  ©  ª  «    ¬  F  `        D  `E  `              	  
-          p               `  p  p  p  p  p  p  p  p  p  p  p  p  p  p  p  p   p!  p"  p)  p+  p-  p     pÿX„}                h             ! c             !                     ¯      !        °      !                     '        H              5      ±               ²      ! "      ²      ! .      ²      ! 3      ²      ! O      E        x      K        i      ³      ! ^      ´      ! m      ³      ! Œ              Š      µ      !                     
-        š      ¶      ! ¬      N        ¸              °      ·      ! Ç   	   R        Ğ   
-   T        Ú      V        á      X        î      y        ı              	             ?     [        3     ¸      !      ¹      ! #     ¹      !   
-   º      !      »      ! 0     ¹      ! J     :        C     ¢        U     H        N     ¢        [              H©À      T'      T'                 	   ™  	   ™     
-             †  Í  †  Í     Q            ½  w    w     !          €Ù  t  Ù  t                 
-  n  
-  n     %             •  £  z  £                   º  0  ¥  0  (              E  á  2  á  .              ¤  Ï  ›  Ï  1               c  v  c  v  9                †    †    :               %  ˜  %  ˜  H               «  Ç  «  Ç  L                ø  ë	  ã  ë	  R              €3
-  2  !
-  2  ^              e  
-  e  
-  r   #                      s   3            4    4       '          €X  ¹  4  ¹  ”   %            ‰  µ  ‰  µ  •               ë  #  Õ  #  ›              D  F  %  F  ­                }  ÿ  }  ÿ  µ   %            \    H    ¿              Ş  V  »  V  Æ   $            C  à  C  à  È   +             n    X    Ñ                ,  ½    ½  Ø                Ş  F  ¿  F  ß                 c  ‚  H  ‚  å                ¡    „    ï                ©        ö   )             ±  d    d  ş   "           €‚  b$  f  b$              €é  ^$  é  ^$  
-              @  m  @  m               {  	$  {  	$              €,!  v#  ,!  v#    7            ª"  j#  ª"  j#  $  5            $  F$  $  F$  1            €t$  _%  d$  _%  8              ®$  Y%  ¡$  Y%  ;             €p%  †&  a%  †&  E              á%  €&  Ô%  €&  I               ™&  S'  ˆ&  S'  R            5¡İç¥î"¯œÈFô      j›j›IßB0       ‰    O^partitionKey=%28http%2C127.0.0.1%2C5003%29,:http://127.0.0.1:5003/employee/101/shubham/BCS/?__debugger__=yes&cmd=resource&f=debugger.js strongly-framed 1 request-method GET response-head HTTP/1.1 200 OK
-Content-Type: application/javascript; charset=utf-8
-Content-Length: 10068
-ETag: "15431210"
-Date: Thu, 27 Aug 2026 11:29:31 GMT, Thu, 27 Aug 2026 11:29:31 GMT
-Server: Werkzeug/3.1.8 Python/3.9.25
-Content-Disposition: inline; filename=debugger.js
-Cache-Control: no-cache
-Accept-Ranges: bytes
- original-response-headers Server: Werkzeug/3.1.8 Python/3.9.25
-Date: Thu, 27 Aug 2026 11:00:38 GMT
-Content-Disposition: inline; filename=debugger.js
-Content-Type: application/javascript; charset=utf-8
-Content-Length: 10068
-Cache-Control: no-cache
-ETag: "15431210"
-Date: Thu, 27 Aug 2026 11:00:38 GMT
-Accept-Ranges: bytes
-Connection: close
- ctid 2 uncompressed-len 0 net-response-time-onstart 7 net-response-time-onstop 8 alt-data 1;10068,javascript/moz-script-bytecode-20260721100211-8l alt-data-from-child 1   ¥?
