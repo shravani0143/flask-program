@@ -244,12 +244,12 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///root/flask/employee.py" added="2026-08-20T04:04:03.808360Z" modified="2026-08-20T04:04:04.058911Z" visited="2026-08-20T04:04:03.808361Z">
+  <bookmark href="file:///root/flask/employee.py" added="2026-08-20T04:04:03.808360Z" modified="2026-08-31T09:58:41.488338Z" visited="2026-08-20T04:04:03.808361Z">
     <info>
       <metadata owner="http://freedesktop.org">
-        <mime:mime-type type="application/octet-stream"/>
+        <mime:mime-type type="text/x-python"/>
         <bookmark:applications>
-          <bookmark:application name="xdg-desktop-portal-gtk" exec="&apos;gio open %u&apos;" modified="2026-08-20T04:04:04.058910Z" count="2"/>
+          <bookmark:application name="xdg-desktop-portal-gtk" exec="&apos;xdg-desktop-portal-gtk %u&apos;" modified="2026-08-31T09:58:41.488337Z" count="6"/>
         </bookmark:applications>
       </metadata>
     </info>
@@ -410,12 +410,12 @@
       </metadata>
     </info>
   </bookmark>
-  <bookmark href="file:///root/sarthak/product.py" added="2026-08-27T03:40:33.410562Z" modified="2026-08-31T09:17:37.428840Z" visited="2026-08-27T03:40:33.410564Z">
+  <bookmark href="file:///root/sarthak/product.py" added="2026-08-27T03:40:33.410562Z" modified="2026-08-31T09:50:10.255380Z" visited="2026-08-27T03:40:33.410564Z">
     <info>
       <metadata owner="http://freedesktop.org">
         <mime:mime-type type="text/x-python"/>
         <bookmark:applications>
-          <bookmark:application name="xdg-desktop-portal-gtk" exec="&apos;xdg-desktop-portal-gtk %u&apos;" modified="2026-08-31T09:17:37.428839Z" count="4"/>
+          <bookmark:application name="xdg-desktop-portal-gtk" exec="&apos;xdg-desktop-portal-gtk %u&apos;" modified="2026-08-31T09:50:10.255379Z" count="6"/>
         </bookmark:applications>
       </metadata>
     </info>
@@ -560,6 +560,26 @@
         <mime:mime-type type="application/octet-stream"/>
         <bookmark:applications>
           <bookmark:application name="xdg-desktop-portal-gtk" exec="&apos;gio open %u&apos;" modified="2026-08-29T11:17:26.615452Z" count="2"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="file:///root" added="2026-08-31T09:57:58.123519Z" modified="2026-08-31T09:57:58.127455Z" visited="2026-08-31T09:57:58.123519Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="inode/directory"/>
+        <bookmark:applications>
+          <bookmark:application name="xdg-desktop-portal-gtk" exec="&apos;xdg-desktop-portal-gtk %u&apos;" modified="2026-08-31T09:57:58.127453Z" count="2"/>
+        </bookmark:applications>
+      </metadata>
+    </info>
+  </bookmark>
+  <bookmark href="file:///root/snehuu" added="2026-08-31T09:58:19.235915Z" modified="2026-08-31T09:58:19.239949Z" visited="2026-08-31T09:58:19.235916Z">
+    <info>
+      <metadata owner="http://freedesktop.org">
+        <mime:mime-type type="inode/directory"/>
+        <bookmark:applications>
+          <bookmark:application name="xdg-desktop-portal-gtk" exec="&apos;xdg-desktop-portal-gtk %u&apos;" modified="2026-08-31T09:58:19.239948Z" count="2"/>
         </bookmark:applications>
       </metadata>
     </info>

@@ -12,7 +12,7 @@
 ~H
 # Command Line History (newest to oldest):
 :wq
-|2,0,1788169050,,"wq"
+|2,0,1788169876,,"wq"
 :WQ
 |2,0,1786705422,,"WQ"
 :wqw
@@ -48,33 +48,167 @@
 
 # File marks:
 '0  1  0  ~/product.py
-|4,48,1,0,1788169050,"~/product.py"
-'1  1  0  ~/student.py
-|4,49,1,0,1788169039,"~/student.py"
-'2  1  0  ~/flask-program/student.py
-|4,50,1,0,1788168897,"~/flask-program/student.py"
-'3  1  0  ~/flask-program/product.py
-|4,51,1,0,1788168882,"~/flask-program/product.py"
-'4  1  0  ~/product.py
-|4,52,1,0,1788168509,"~/product.py"
+|4,48,1,0,1788169876,"~/product.py"
+'1  1  0  ~/product.py
+|4,49,1,0,1788169837,"~/product.py"
+'2  1  0  ~/employee.py
+|4,50,1,0,1788169780,"~/employee.py"
+'3  1  0  ~/employee
+|4,51,1,0,1788169718,"~/employee"
+'4  1  0  ~/student.py
+|4,52,1,0,1788169683,"~/student.py"
 '5  1  0  ~/product.py
-|4,53,1,0,1788168431,"~/product.py"
+|4,53,1,0,1788169050,"~/product.py"
 '6  1  0  ~/product.py
-|4,54,1,0,1788168431,"~/product.py"
-'7  1  0  ~/product.py
-|4,55,1,0,1788168020,"~/product.py"
-'8  1  0  ~/product.py
-|4,56,1,0,1788168020,"~/product.py"
-'9  1  0  ~/product.py
-|4,57,1,0,1788168020,"~/product.py"
+|4,54,1,0,1788169050,"~/product.py"
+'7  1  0  ~/student.py
+|4,55,1,0,1788169039,"~/student.py"
+'8  1  0  ~/flask-program/student.py
+|4,56,1,0,1788168897,"~/flask-program/student.py"
+'9  1  0  ~/flask-program/product.py
+|4,57,1,0,1788168882,"~/flask-program/product.py"
 
 # Jumplist (newest first):
+-'  1  0  ~/product.py
+|4,39,1,0,1788169876,"~/product.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169837,"~/product.py"
+-'  1  0  ~/employee.py
+|4,39,1,0,1788169780,"~/employee.py"
+-'  1  0  ~/employee.py
+|4,39,1,0,1788169780,"~/employee.py"
+-'  1  0  ~/employee.py
+|4,39,1,0,1788169780,"~/employee.py"
+-'  1  0  ~/employee.py
+|4,39,1,0,1788169780,"~/employee.py"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/employee
+|4,39,1,0,1788169718,"~/employee"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169683,"~/student.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169050,"~/product.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169050,"~/product.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169050,"~/product.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169050,"~/product.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169050,"~/product.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169050,"~/product.py"
+-'  1  0  ~/product.py
+|4,39,1,0,1788169050,"~/product.py"
 -'  1  0  ~/product.py
 |4,39,1,0,1788169050,"~/product.py"
 -'  1  0  ~/student.py
 |4,39,1,0,1788169039,"~/student.py"
 -'  1  0  ~/student.py
 |4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
+-'  1  0  ~/student.py
+|4,39,1,0,1788169039,"~/student.py"
 -'  1  0  ~/flask-program/student.py
 |4,39,1,0,1788168897,"~/flask-program/student.py"
 -'  1  0  ~/flask-program/student.py
@@ -83,202 +217,78 @@
 |4,39,1,0,1788168897,"~/flask-program/student.py"
 -'  1  0  ~/flask-program/student.py
 |4,39,1,0,1788168897,"~/flask-program/student.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/flask-program/product.py
-|4,39,1,0,1788168882,"~/flask-program/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168509,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168431,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/product.py
-|4,39,1,0,1788168020,"~/product.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
--'  1  0  ~/student.py
-|4,39,1,0,1788167132,"~/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
+-'  1  0  ~/flask-program/student.py
+|4,39,1,0,1788168897,"~/flask-program/student.py"
 
 # History of marks within files (newest to oldest):
 
 > ~/product.py
-	*	1788169049	0
+	*	1788169874	0
+	"	1	0
+	^	1	0
+
+> ~/employee.py
+	*	1788169779	0
+	"	1	0
+	^	1	0
+
+> ~/employee
+	*	1788169716	0
 	"	1	0
 	^	1	0
 
 > ~/student.py
-	*	1788169037	0
+	*	1788169681	0
 	"	1	0
 	^	1	0
 
@@ -528,20 +538,3 @@
 	^	1	15
 	.	1	14
 	+	1	14
-
-> ~/sarthak/ss/sss.py
-	*	1787809626	0
-	"	2	0
-	^	2	0
-	.	1	17
-	+	1	17
-
-> ~/sarthak/array.py
-	*	1787807610	0
-	"	1	0
-	^	1	0
-	.	2	0
-	+	31	15
-	+	1	23
-	+	1	71
-	+	2	0

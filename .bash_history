@@ -1,46 +1,3 @@
-EOF
-
-python --version
-pip --version
-code --no-sandbox --user-data-dir=/tmp/vscode-root
-pip install flask
-flask --version
-/usr/bin/python /root/college.py
-/usr/bin/python /root/flask/app.py
-php -v
-cd /var/www/html
-vim empstring.php
-cd ..
-mkdir 1002
-cd 1002
-vim p4q1.java
-cd 1002
-mkdir 1002
-cd 1002
-vim p4q1.java
-vim manger.java
-cd 1002
-mkdir project
-cd project
-cd ..
-mkdir student
-cd student
-vim studentinfo.java
-cc studentinfo.java
-vim studentinfo.java
-javac studentinfo.java
-vim studentinfo.java
-javac studentinfo.java
-java studentinfo
-vim studentinfo.java
-javac studentinfo.java
-vim studentresult.java
-gcc studentresult.java
-javac studentresult.java
-vim studentresult.java
-vim studentinfo.java
-vim StudentInfo.java
-javac StudentInfo.java
 vim StudentInfo.java
 javac StudentInfo.java
 vim studentresult.java
@@ -998,3 +955,46 @@ mkdir flask-program
 cd flask-program
 vim product.py
 vim student.py
+git config --global user.name shravani0143
+git config --global user.email sulochanamane99@gmail.com
+git config --list
+git init
+vim student.py
+vim product.py
+git add product.py
+git commit -m"done"
+git add
+git add .
+git commit -m"done"
+git remote -v
+git remote add origin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
+git remote -v
+git push -u origin main
+source /root/netra/venv/bin/activate
+/root/netra/venv/bin/python /root/sarthak/product.py
+/root/netra/venv/bin/python /root/student.py
+source /root/netra/venv/bin/activate
+/root/netra/venv/bin/python /root/student.py
+source /root/netra/venv/bin/activate
+vim student.py
+vim employee
+git config --list
+source /root/netra/venv/bin/activate
+vim employee.py
+vim product.py
+git config --list
+source /root/netra/venv/bin/activate
+vim product.py
+git add product.py
+git commit -m"product details"
+git add .
+git remote add originhttps://github.com/shravani0143/flask-program
+git remote -v
+git push -u origin main
+git pull
+git config --global user.name shravani0143
+git config --global user.email sulochanamane99@gmail.com
+git config --list
+source /root/netra/venv/bin/activate
+mkdir shravani
+cd shravani
