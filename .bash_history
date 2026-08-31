@@ -1,22 +1,3 @@
-vim StudentInfo.java
-javac StudentInfo.java
-vim studentresult.java
-javac studentresult.java
-vim studentresult.java
-vim StudentInfo.java
-vim studentresult.java
-javac studentresult.java
-vim studentresult.java
-javac studentresult.java
-vim studentresult.java
-vim StudentInfo.java
-vim studentresult.java
-vim StudentInfo.java
-javac StudentInfo.java
-vim StudentInfo.java
-javac StudentInfo.java
-vim studentresult.java
-javac studentresult.java
 cd ..
 vim studentmain.java
  source /root/flask/venv/bin/activate
@@ -998,3 +979,22 @@ git config --list
 source /root/netra/venv/bin/activate
 mkdir shravani
 cd shravani
+source /root/netra/venv/bin/activate
+pwd
+cd
+ls
+dir
+git init
+git remote add origin https://github.com/shravani0143/flask-program.git
+git remote set-url origin https://github.com/shravani0143/flask-program.git
+git remote -v
+git add .
+git status
+git commit -m "Initial commit"
+git branch -M main
+git push -u origin main
+git push -u origin main --force
+git pull origin main --allow-unrelated-histories
+git add .
+git commit -m"flask practical"
+git push -u origin main

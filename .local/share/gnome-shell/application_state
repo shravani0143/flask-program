@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <application-state>
   <context id="">
-    <application id="firefox.desktop" score="5561" last-seen="1788170486"/>
-    <application id="code.desktop" score="7103" last-seen="1788170484"/>
+    <application id="firefox.desktop" score="5562" last-seen="1788170836"/>
+    <application id="code.desktop" score="7149" last-seen="1788170834"/>
     <application id="org.gnome.Nautilus.desktop" score="533" last-seen="1788003953"/>
     <application id="gnome-control-center.desktop" score="1" last-seen="1788000370"/>
     <application id="org.gnome.Terminal.desktop" score="14642" last-seen="1788169228"/>
-    <application id="xdg-desktop-portal-gtk.desktop" score="0" last-seen="1788170314"/>
+    <application id="xdg-desktop-portal-gtk.desktop" score="0" last-seen="1788170741"/>
     <application id="org.gnome.gedit.desktop" score="6" last-seen="1788001477"/>
   </context>
 </application-state>
